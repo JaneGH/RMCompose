@@ -11,17 +11,27 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel  @Inject constructor (private val getUserUseCase: GetUserUseCase, private val savedStateHandle: SavedStateHandle) : ViewModel() {
+class MainViewModel  @Inject constructor (private val getUserUseCase: GetUserUseCase) : ViewModel() {
     private var _state = MutableStateFlow<MainScreenState>(MainScreenState.Idle)
-
-    val selectedText: StateFlow<String?> =
-        savedStateHandle.getStateFlow("selectedText", null)
-
     val state: StateFlow<MainScreenState> = _state.asStateFlow()
+
+//    private var _selectedText = MutableStateFlow("")
+//    val selectedText: StateFlow<String> = _selectedText
+//
+//
+//    fun onTextReturned(text: String) {
+//        _selectedText.value = text
+//    }
+
+
+
       @SuppressLint("SuspiciousIndentation")
       fun getCharacters() {
           _state.value = MainScreenState.Loading
@@ -35,6 +45,7 @@ class MainViewModel  @Inject constructor (private val getUserUseCase: GetUserUse
               }
 
       }
+
 
 
 }

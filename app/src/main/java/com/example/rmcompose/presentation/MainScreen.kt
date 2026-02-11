@@ -16,24 +16,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 
 @Composable
-fun MainScreen (onDetailedClick: (character: String) -> Unit,  viewModel: MainViewModel = hiltViewModel()){
+fun MainScreen (onDetailedClick: (character: String) -> Unit,  viewModel: MainViewModel, selectedText: String){
 
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
-    val selectedText by viewModel.selectedText.collectAsState()
 
 
     LaunchedEffect(Unit) {
@@ -41,7 +37,6 @@ fun MainScreen (onDetailedClick: (character: String) -> Unit,  viewModel: MainVi
     }
 
 
-    println("!!!"+selectedText)
     when(uiState){
 
         is MainScreenState.Idle -> {
@@ -50,8 +45,10 @@ fun MainScreen (onDetailedClick: (character: String) -> Unit,  viewModel: MainVi
         is MainScreenState.Success -> {
             Column(modifier = Modifier.systemBarsPadding()) {
 
-                selectedText?.let {
-                    Text("Returned text from details: $it")
+                selectedText.let {
+                    if (!selectedText.isEmpty()) {
+                            Text("Returned text from details: $it")
+                        }
                 }
 
 
