@@ -20,13 +20,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.rmcompose.data.remote.dto.Result
 import com.example.rmcompose.services.LocalMusicManager
 
 @Composable
 fun DetailedScreen(
     onBackWithResult: (textResult: String) -> Unit,
-    character: Result,
+    characterName: String,
     viewModel: DetailViewModel = hiltViewModel()
 ) {
 
@@ -51,7 +50,7 @@ fun DetailedScreen(
 
         Text(
             modifier = Modifier.padding(top = 10.dp),
-            text = "Name: ${character.name}"
+            text = "Name: $characterName"
         )
 
         OutlinedTextField(

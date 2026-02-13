@@ -11,6 +11,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.example.rmcompose.data.remote.dto.Result
 import kotlinx.serialization.json.Json
 
@@ -34,30 +35,37 @@ fun AppNavGraph(navController: NavHostController) {
             MainScreen(
                 viewModel = viewModel,
 //                savedStateHandle = savedStateHandle,
-                onDetailedClick = { characterId ->
-                    navController.navigate("details/$characterId")
+                onDetailedClick = { characterName ->
+                    navController.navigate("details/$characterName")
                 }
             )
         }
 
         composable(
-            route = "details/{character}",
+            route = "details/{characterName}",
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = "rmcompose://details/{characterName}"
+                }
+            ),
             arguments = listOf(
-                navArgument("character") {
+                navArgument("characterName") {
                     type = NavType.StringType
                 }
             )
         ) { backStackEntry ->
 
-            val encoded =
-                backStackEntry.arguments?.getString("character") ?: ""
+//            val encoded =
+//                backStackEntry.arguments?.getString("character") ?: ""
+//
+//            val decoded = Uri.decode(encoded)
+//
+//            val character = Json.decodeFromString<Result>(decoded)
 
-            val decoded = Uri.decode(encoded)
-
-            val character = Json.decodeFromString<Result>(decoded)
+            val characterName = backStackEntry.arguments?.getString("characterName") ?: ""
 
             DetailedScreen(
-                character = character,
+                characterName = characterName,
                 onBackWithResult = { selectedText ->
 
                     navController.previousBackStackEntry

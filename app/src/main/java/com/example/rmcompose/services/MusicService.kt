@@ -2,14 +2,17 @@ package com.example.rmcompose.services
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.net.Uri
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
+import com.example.rmcompose.MainActivity
 
 class MusicService : Service() {
 
@@ -29,9 +32,24 @@ class MusicService : Service() {
 
         player = ExoPlayer.Builder(this).build()
 
+        val intent = Intent(this, MainActivity::class.java).apply {
+            data = Uri.parse("rmcompose://details/Rick")
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
         val notification = NotificationCompat.Builder(this, "music")
             .setContentTitle("Music playing")
+            .setContentText("Tap to open app")
             .setSmallIcon(android.R.drawable.ic_media_play)
+            .setContentIntent(pendingIntent)
+            .setOngoing(true)
             .build()
 
         startForeground(1, notification)

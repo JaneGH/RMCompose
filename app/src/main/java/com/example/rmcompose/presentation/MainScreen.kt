@@ -41,7 +41,7 @@ import coil.compose.rememberAsyncImagePainter
 
 
 @Composable
-fun MainScreen (onDetailedClick: (character: String) -> Unit,  viewModel: MainViewModel){
+fun MainScreen (onDetailedClick: (characterName: String) -> Unit,  viewModel: MainViewModel){
 
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val selectedText by viewModel.selectedText.collectAsStateWithLifecycle()
@@ -131,8 +131,8 @@ fun MainScreen (onDetailedClick: (character: String) -> Unit,  viewModel: MainVi
                     items(listResults) { item ->
                         Card(
                             onClick = {
-                                val characterString = Uri.encode(Json.encodeToString(item))
-                                 onDetailedClick(characterString)
+//                                val characterString = Uri.encode(Json.encodeToString(item))
+                                 onDetailedClick(item.name)
                             },
                             modifier = Modifier.fillMaxWidth(),
                             shape = RectangleShape,
