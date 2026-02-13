@@ -1,6 +1,9 @@
 package com.example.rmcompose.presentation
 
 import android.annotation.SuppressLint
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,19 +21,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel  @Inject constructor (private val getUserUseCase: GetUserUseCase) : ViewModel() {
+class MainViewModel  @Inject constructor (private val getUserUseCase: GetUserUseCase,
+                                          private val savedStateHandle: SavedStateHandle ) : ViewModel() {
     private var _state = MutableStateFlow<MainScreenState>(MainScreenState.Idle)
     val state: StateFlow<MainScreenState> = _state.asStateFlow()
 
-//    private var _selectedText = MutableStateFlow("")
-//    val selectedText: StateFlow<String> = _selectedText
-//
-//
-//    fun onTextReturned(text: String) {
-//        _selectedText.value = text
-//    }
 
-
+    val selectedText: StateFlow<String> =
+        savedStateHandle.getStateFlow("selectedText", "")
 
       @SuppressLint("SuspiciousIndentation")
       fun getCharacters() {

@@ -30,14 +30,10 @@ fun AppNavGraph(navController: NavHostController) {
             val savedStateHandle =
                 navController.currentBackStackEntry?.savedStateHandle
 
-            val selectedText by savedStateHandle
-                ?.getStateFlow("selectedText", "")
-                ?.collectAsState()
-                ?: mutableStateOf("")
 
             MainScreen(
                 viewModel = viewModel,
-                selectedText = selectedText,
+//                savedStateHandle = savedStateHandle,
                 onDetailedClick = { characterId ->
                     navController.navigate("details/$characterId")
                 }
