@@ -1,6 +1,11 @@
 package com.example.rmcompose.presentation
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.net.Uri
+import android.os.IBinder
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -23,9 +28,11 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -33,11 +40,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import kotlinx.serialization.json.Json
 import coil.compose.rememberAsyncImagePainter
+import com.example.rmcompose.services.MyService
 
 
 @Composable
@@ -66,6 +75,41 @@ fun MainScreen (onDetailedClick: (characterName: String) -> Unit,  viewModel: Ma
         viewModel.getCharacters()
      }
 
+    val binder : MyService.MyBinder? = null
+    var service by remember { mutableStateOf<MyService?>(null) }
+    var isBound by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+
+    val connection = object : ServiceConnection {
+        override fun onServiceConnected(
+            name: ComponentName?,
+            binder: IBinder?
+        ) {
+            val localBinder = binder as MyService.MyBinder
+            service = localBinder.getService()
+            isBound = true
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            service = null
+            isBound = false
+        }
+
+    }
+
+    DisposableEffect(Unit) {
+        val intent = Intent(context, MyService::class.java)
+        context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
+
+        onDispose {
+            if (isBound) {
+                context.unbindService(connection)
+                isBound = false
+            }
+        }
+    }
+
 
     when(uiState){
 
@@ -73,7 +117,18 @@ fun MainScreen (onDetailedClick: (characterName: String) -> Unit,  viewModel: Ma
             Text("Waiting for uploading...")
         }
         is MainScreenState.Success -> {
+
             Column(modifier = Modifier.systemBarsPadding()) {
+
+                Button(
+                    onClick = {
+                        val message = service?.sayHello()
+                        println(message)
+                    },
+                    enabled = isBound
+                ) {
+                    Text("Call Service")
+                }
 
                 Button (onClick = {
                     launcher.launch("image/*")
