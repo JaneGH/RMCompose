@@ -34,7 +34,7 @@ class MainViewModel  @Inject constructor (private val getUserUseCase: GetUserUse
       fun getCharacters() {
           _state.value = MainScreenState.Loading
 
-              viewModelScope.launch(Dispatchers.IO) {
+              viewModelScope.launch() {
                   try {
                       _state.value =  MainScreenState.Success(getUserUseCase().results)
                   } catch (e: Exception) {
